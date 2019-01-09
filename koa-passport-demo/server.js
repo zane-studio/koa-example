@@ -21,29 +21,39 @@ app.use(route.get('/', function(ctx) {
   ctx.body = fs.createReadStream('views/login.html');
 }))
 
-app.use(route.post('/custom', function(ctx) {
-  return passport.authenticate('local', function(err, user, info, status) {
-    if (user === false) {
-      ctx.body = { success: false };
-      ctx.throw(401);
-    } else {
-      ctx.body = { success: true };
-      return ctx.login(user);
-    }
-  })
-}))
+app.use(route.post(
+  '/custom', 
+  function(ctx) {
+    return passport.authenticate(
+      'local', 
+      function(err, user, info, status) {
+        if (user === false) {
+          ctx.body = { success: false };
+          ctx.throw(401);
+        } else {
+          ctx.body = { success: true };
+          return ctx.login(user);
+        }
+      }
+    )
+  }
+))
 
-app.use(route.post('/login',
+app.use(route.post(
+  '/login',
   passport.authorize('local', {
     successRedirect: '/app',
     failureRedirect: '/'
   }
 )))
 
-app.use(route.get('/logout', function(ctx) {
-  ctx.logout();
-  ctx.redirect('/');
-}))
+app.use(route.get(
+  '/logout', 
+  function(ctx) {
+    ctx.logout();
+    ctx.redirect('/');
+  }
+))
 
 app.use(function(ctx, next) {
   if (ctx.isAuthenticated()) {
